@@ -1,0 +1,128 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  images: { src: ImageMetadata; alt: string }[];
+  targetHeight?: number;
+  gap?: number;
+}
+
+const { images, targetHeight = 320, gap = 12 } = Astro.props;
+---
+
+<div
+  class="justified-grid"
+  data-target-height={targetHeight}
+  data-gap={gap}
+  style={`--grid-gap: ${gap}px;`}
+>
+  {images.map((img) => (
+    <Image
+      src={img.src}
+      alt={img.alt}
+      widths={[400, 800, 1600]}
+      sizes="(max-width: 768px) 100vw, 50vw"
+      loading="lazy"
+      decoding="async"
+    />
+  ))}
+</div>
+
+<style>
+  .justified-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--grid-gap, 12px);
+    align-items: flex-start;
+  }
+
+  .justified-grid :global(img) {
+    display: block;
+    height: 320px;          /* fallback until JS runs */
+    width: auto;
+    object-fit: cover;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+</style>
+
+<script>
+  function layoutGrid(grid: HTMLElement) {
+    const targetHeight = Number(grid.dataset.targetHeight) || 320;
+    const gap = Number(grid.dataset.gap) || 12;
+    const containerWidth = grid.clientWidth;
+    const images = Array.from(grid.querySelectorAll('img')) as HTMLImageElement[];
+
+    if (!images.length) return;
+
+    // Skip until all images have loaded dimensions
+    const allLoaded = images.every((img) => img.naturalWidth > 0);
+    if (!allLoaded) return;
+
+    let row: HTMLImageElement[] = [];
+    let rowAspectSum = 0;
+    let rowWidth = 0;
+
+    const flushRow = () => {
+      if (!row.length) return;
+      const available = containerWidth - gap * (row.length - 1);
+      const rowHeight = available / rowAspectSum;
+      row.forEach((img) => {
+        img.style.height = `${rowHeight}px`;
+        img.style.width = `${img.naturalWidth * (rowHeight / img.naturalHeight)}px`;
+      });
+      row = [];
+      rowAspectSum = 0;
+      rowWidth = 0;
+    };
+
+    for (const img of images) {
+      const aspect = img.naturalWidth / img.naturalHeight;
+      const projectedWidth = targetHeight * aspect;
+
+      if (rowWidth + projectedWidth + gap * row.length > containerWidth && row.length > 0) {
+        flushRow();
+      }
+
+      row.push(img);
+      rowAspectSum += aspect;
+      rowWidth += projectedWidth;
+    }
+
+    // Last row: don't stretch to fill container
+    if (row.length) {
+      const available = containerWidth - gap * (row.length - 1);
+      const lastRowHeight = Math.min(targetHeight, available / rowAspectSum);
+      row.forEach((img) => {
+        img.style.height = `${lastRowHeight}px`;
+        img.style.width = `${img.naturalWidth * (lastRowHeight / img.naturalHeight)}px`;
+      });
+    }
+  }
+
+  function layoutAll() {
+    document.querySelectorAll<HTMLElement>('.justified-grid').forEach(layoutGrid);
+  }
+
+  // Run once images are loaded
+  if (document.readyState === 'complete') {
+    layoutAll();
+  } else {
+    window.addEventListener('load', layoutAll);
+  }
+
+  // Recalculate on resize (debounced)
+  let resizeTimer: number | undefined;
+  window.addEventListener('resize', () => {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(layoutAll, 150);
+  });
+
+  // Also re-run when images finish loading individually
+  document.querySelectorAll<HTMLImageElement>('.justified-grid img').forEach((img) => {
+    if (!img.complete) {
+      img.addEventListener('load', () => layoutGrid(img.closest('.justified-grid') as HTMLElement));
+    }
+  });
+</script>
