@@ -1,0 +1,206 @@
+---
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+const links = [
+  { href: '/fotografia', label: 'fotografía' },
+  { href: '/escritura', label: 'escritura' },
+  { href: '/exploraciones', label: 'exploraciones' },
+  { href: '/contacto', label: 'contacto' },
+];
+---
+
+<header class="site-header">
+  <a href="/" class="site-name">Mercedes Bonavita</a>
+
+  <!-- Desktop: "···" hover reveal -->
+  <div class="desktop-menu">
+    <button class="menu-trigger" aria-label="Abrir menú" aria-haspopup="true">···</button>
+    <nav class="menu-list" aria-label="Navegación principal">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={['menu-link', { active: currentPath === link.href }]}
+          aria-current={currentPath === link.href ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+
+  <!-- Mobile: hamburger -->
+  <button class="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-overlay">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</header>
+
+<!-- Mobile overlay -->
+<div id="mobile-overlay" class="mobile-overlay" hidden>
+  <nav aria-label="Navegación móvil">
+    {links.map((link) => (
+      <a href={link.href} class="mobile-link">{link.label}</a>
+    ))}
+  </nav>
+</div>
+
+<style>
+  .site-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .site-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+    font-weight: 500;
+    color: white;
+    mix-blend-mode: difference;
+  }
+
+  /* ─── Desktop menu ─── */
+  .desktop-menu {
+    position: relative;
+  }
+
+  .menu-trigger {
+    font-family: var(--font-ui);
+    font-size: 1.5rem;
+    color: white;
+    mix-blend-mode: difference;
+    padding: var(--space-1) var(--space-2);
+    line-height: 1;
+  }
+
+  .menu-list {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    background: white;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    min-width: 200px;
+    text-align: right;
+  }
+
+  .desktop-menu:hover .menu-list,
+  .desktop-menu:focus-within .menu-list {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .menu-link {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .menu-link.active {
+    text-decoration: underline;
+  }
+
+  /* ─── Mobile hamburger ─── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 18px;
+    padding: 0;
+  }
+
+  .hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: white;
+    mix-blend-mode: difference;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* ─── Mobile overlay ─── */
+  .mobile-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-overlay[hidden] {
+    display: none;
+  }
+
+  .mobile-overlay nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    text-align: center;
+  }
+
+  .mobile-link {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  /* ─── Responsive switch ─── */
+  @media (max-width: 768px) {
+    .desktop-menu { display: none; }
+    .hamburger { display: flex; }
+  }
+</style>
+
+<script>
+  const hamburger = document.querySelector('.hamburger') as HTMLButtonElement;
+  const overlay = document.getElementById('mobile-overlay') as HTMLElement;
+  const mobileLinks = overlay.querySelectorAll('a');
+
+  function openMenu() {
+    overlay.hidden = false;
+    hamburger.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    (mobileLinks[0] as HTMLAnchorElement)?.focus();
+  }
+
+  function closeMenu() {
+    overlay.hidden = true;
+    hamburger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    hamburger.focus();
+  }
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = hamburger.getAttribute('aria-expanded') === 'true';
+    isOpen ? closeMenu() : openMenu();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && hamburger.getAttribute('aria-expanded') === 'true') {
+      closeMenu();
+    }
+  });
+</script>
