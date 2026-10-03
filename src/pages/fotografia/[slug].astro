@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import SeriesDetail from '../../layouts/SeriesDetail.astro';
+import { resolveImage } from '../../utils/images';
+
+export async function getStaticPaths() {
+  const series = await getCollection('fotografias');
+  return series.map((serie) => ({
+    params: { slug: serie.id },
+    props: { serie },
+  }));
+}
+
+const { serie } = Astro.props;
+
+const resolvedImages = serie.data.images.map((img) => ({
+  src: resolveImage(img.src),
+  alt: img.alt,
+}));
+---
+
+<SeriesDetail
+  title={serie.data.title}
+  statement={serie.data.statement}
+  images={resolvedImages}
+/>

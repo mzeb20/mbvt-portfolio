@@ -1,0 +1,50 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import JustifiedGrid from '../components/JustifiedGrid.astro';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  title: string;
+  statement?: string;
+  images: { src: ImageMetadata; alt: string }[];
+}
+
+const { title, statement, images } = Astro.props;
+---
+
+<BaseLayout title={`${title} — Mercedes Bonavita`}>
+  <main class="series-detail">
+    <header class="series-header">
+      <h1>{title}</h1>
+      {statement && <p class="statement">{statement}</p>}
+    </header>
+
+    <JustifiedGrid images={images} />
+  </main>
+</BaseLayout>
+
+<style>
+  .series-detail {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4) var(--space-8);
+  }
+
+  .series-header {
+    margin-bottom: var(--space-6);
+    max-width: 65ch;
+  }
+
+  .series-header h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    margin-bottom: var(--space-3);
+  }
+
+  .statement {
+    font-family: var(--font-body);
+    color: var(--color-text-muted);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+</style>
