@@ -1,7 +1,46 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SeriesCard from '../../components/SeriesCard.astro';
+import { resolveImage } from '../../utils/images';
+
+const series = (await getCollection('escrituras')).sort(
+  (a, b) => a.data.order - b.data.order
+);
 ---
 
 <BaseLayout title="Escritura — Mercedes Bonavita">
-  <h1>Escritura</h1>
+  <main class="index">
+    <h1>Escritura</h1>
+
+    <div class="series-grid">
+      {series.map((pieza) => (
+        <SeriesCard
+          title={pieza.data.title}
+          cover={resolveImage(pieza.data.cover)}
+          href={`/escrituras/${pieza.id}`}
+        />
+      ))}
+    </div>
+  </main>
 </BaseLayout>
+
+<style>
+  .index {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .index h1 {
+    margin-bottom: var(--space-6);
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+
+  .series-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+  }
+</style>
