@@ -1,13 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
 import { Image } from 'astro:assets';
 import heroImage from '../assets/hero.jpg';
 ---
 
-<BaseLayout title="Mercedes Bonavita">
-  <Header currentPath={Astro.url.pathname} />
-
+<BaseLayout title="Mercedes Bonavita" variant="hero">
   <main class="hero">
     <Image
       src={heroImage}
@@ -16,7 +13,6 @@ import heroImage from '../assets/hero.jpg';
       sizes="100vw"
       loading="eager"
       fetchpriority="high"
-      class="hero-image"
     />
   </main>
 </BaseLayout>

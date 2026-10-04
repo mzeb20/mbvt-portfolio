@@ -1,9 +1,10 @@
 ---
 interface Props {
   currentPath: string;
+  variant?: 'hero' | 'solid' | 'reading';
 }
 
-const { currentPath } = Astro.props;
+const { currentPath, variant = 'solid' } = Astro.props;
 
 const links = [
   { href: '/fotografia', label: 'fotografía' },
@@ -13,7 +14,7 @@ const links = [
 ];
 ---
 
-<header class="site-header">
+<header class:list={['site-header', `header-${variant}`]}>
   <a href="/" class="site-name">Mercedes Bonavita</a>
 
   <!-- Desktop: "···" hover reveal -->
@@ -50,8 +51,9 @@ const links = [
 </div>
 
 <style>
+  /* ─── Base header ─── */
   .site-header {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -66,8 +68,53 @@ const links = [
     font-family: var(--font-display);
     font-size: clamp(1.25rem, 2vw, 1.75rem);
     font-weight: 500;
+  }
+
+  /* ─── Hero variant: transparent over image ─── */
+  .site-header.header-hero {
+    background: transparent;
+  }
+
+  .site-header.header-hero .site-name,
+  .site-header.header-hero .menu-trigger {
     color: white;
     mix-blend-mode: difference;
+  }
+
+  .site-header.header-hero .hamburger span {
+    background: white;
+    mix-blend-mode: difference;
+  }
+
+  /* ─── Solid variant: white bar, dark text, fixed ─── */
+  .site-header.header-solid {
+    background: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .site-header.header-solid .site-name,
+  .site-header.header-solid .menu-trigger {
+    color: var(--color-text);
+  }
+
+  .site-header.header-solid .hamburger span {
+    background: var(--color-text);
+  }
+
+  /* ─── Reading variant: white bar, dark text, scrolls with content ─── */
+  .site-header.header-reading {
+    position: static;
+    background: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .site-header.header-reading .site-name,
+  .site-header.header-reading .menu-trigger {
+    color: var(--color-text);
+  }
+
+  .site-header.header-reading .hamburger span {
+    background: var(--color-text);
   }
 
   /* ─── Desktop menu ─── */
@@ -78,8 +125,6 @@ const links = [
   .menu-trigger {
     font-family: var(--font-ui);
     font-size: 1.5rem;
-    color: white;
-    mix-blend-mode: difference;
     padding: var(--space-1) var(--space-2);
     line-height: 1;
   }
@@ -133,8 +178,6 @@ const links = [
     display: block;
     height: 2px;
     width: 100%;
-    background: white;
-    mix-blend-mode: difference;
     transition: transform 0.2s ease, opacity 0.2s ease;
   }
 

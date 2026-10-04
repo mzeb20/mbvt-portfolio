@@ -21,6 +21,10 @@ body {
   background: var(--color-bg);
 }
 
+body.variant-solid main {
+  padding-top: 6rem;
+}
+
 img, picture, video, canvas, svg {
   display: block;
   max-width: 100%;

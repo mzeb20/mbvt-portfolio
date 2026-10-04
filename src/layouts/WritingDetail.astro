@@ -1,0 +1,73 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<BaseLayout title={`${title} — Mercedes Bonavita`} variant="reading">
+  <main class="writing-detail">
+    <article class="prose">
+      <h1>{title}</h1>
+      <slot />
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  .writing-detail {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4) var(--space-8);
+  }
+
+  .prose {
+    display: grid;
+    grid-template-columns:
+      [full-start] minmax(1rem, 1fr)
+      [content-start] min(65ch, 100% - 2rem) [content-end]
+      minmax(1rem, 1fr) [full-end];
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  .prose > :global(*) {
+    grid-column: content;
+  }
+
+  .prose > :global(.breakout) {
+    grid-column: full;
+  }
+
+  .prose h1 {
+    font-family: var(--font-display);
+    font-size: var(--fs-h1);
+    font-weight: 500;
+    margin-bottom: var(--space-4);
+  }
+
+  .prose :global(p) {
+    margin-bottom: var(--space-3);
+  }
+
+  .prose :global(em) {
+    font-style: italic;
+  }
+
+  .prose :global(strong) {
+    font-weight: 600;
+  }
+
+  .prose :global(figure.breakout) {
+    margin: var(--space-4) 0;
+  }
+
+  .prose :global(figure.breakout img) {
+    width: 100%;
+    height: auto;
+  }
+</style>
