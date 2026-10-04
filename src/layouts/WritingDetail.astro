@@ -25,22 +25,11 @@ const { title } = Astro.props;
   }
 
   .prose {
-    display: grid;
-    grid-template-columns:
-      [full-start] minmax(1rem, 1fr)
-      [content-start] min(65ch, 100% - 2rem) [content-end]
-      minmax(1rem, 1fr) [full-end];
+    max-width: 65ch;
+    margin: 0 auto;
     font-family: var(--font-body);
     font-size: 1.0625rem;
     line-height: 1.6;
-  }
-
-  .prose > :global(*) {
-    grid-column: content;
-  }
-
-  .prose > :global(.breakout) {
-    grid-column: full;
   }
 
   .prose h1 {
@@ -50,24 +39,21 @@ const { title } = Astro.props;
     margin-bottom: var(--space-4);
   }
 
-  .prose :global(p) {
+  .prose p {
     margin-bottom: var(--space-3);
   }
 
-  .prose :global(em) {
+  .prose em {
     font-style: italic;
   }
 
-  .prose :global(strong) {
+  .prose strong {
     font-weight: 600;
   }
 
-  .prose :global(figure.breakout) {
-    margin: var(--space-4) 0;
-  }
-
-  .prose :global(figure.breakout img) {
-    width: 100%;
+  .prose img {
+    max-width: 100%;
     height: auto;
+    margin: var(--space-4) 0;
   }
 </style>
