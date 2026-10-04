@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contacto — Mercedes Bonavita">
+  <main class="contact-page">
+    <h1>Contacto</h1>
+
+    <form
+      action="https://api.web3forms.com/submit"
+      method="POST"
+      id="contact-form"
+      class="contact-form"
+      novalidate
+    >
+      <input type="hidden" name="access_key" value="1dc7ef46-f330-4749-9574-4f83edf3270c" />
+      <input type="checkbox" name="botcheck" class="hidden" style="display:none" />
+
+      <div class="form-field">
+        <label for="name">Nombre</label>
+        <input type="text" id="name" name="name" required />
+      </div>
+
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <div class="form-field">
+        <label for="message">Mensaje</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+      </div>
+
+      <button type="submit">Enviar</button>
+      <div id="result" role="status" aria-live="polite"></div>
+    </form>
+  </main>
+</BaseLayout>
+
+<style>
+  .contact-page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    padding-bottom: var(--space-6);
+  }
+
+  .contact-page h1 {
+    font-family: var(--font-display);
+    font-size: var(--fs-h1);
+    font-weight: 500;
+    margin-bottom: var(--space-6);
+  }
+
+  .form-field {
+    margin-bottom: var(--space-3);
+  }
+
+  .form-field label {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: var(--fs-ui);
+    margin-bottom: var(--space-1);
+  }
+
+  .form-field input,
+  .form-field textarea {
+    width: 100%;
+    padding: var(--space-2);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    border: 1px solid #ccc;
+    background: white;
+  }
+
+  .form-field input:focus,
+  .form-field textarea:focus {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+
+  button[type="submit"] {
+    font-family: var(--font-ui);
+    font-size: var(--fs-ui);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-text);
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: var(--space-2);
+  }
+
+  #result {
+    margin-top: var(--space-3);
+    font-family: var(--font-ui);
+  }
+</style>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const result = document.getElementById('result') as HTMLElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
+
+    result.textContent = 'Enviando...';
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: json,
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        result.textContent = 'Mensaje enviado. Gracias.';
+        form.reset();
+      } else {
+        result.textContent = data.message || 'Error al enviar. Intenta de nuevo.';
+      }
+    } catch (error) {
+      result.textContent = 'Error de conexión. Intenta de nuevo.';
+    }
+  });
+</script>
