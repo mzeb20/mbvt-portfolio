@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Página no encontrada — Mercedes Bonavita">
+  <main class="not-found">
+    <h1>404</h1>
+    <p>La página que buscas no existe.</p>
+    <a href="/">Volver al inicio</a>
+  </main>
+</BaseLayout>
+
+<style>
+  .not-found {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-4);
+    text-align: center;
+  }
+
+  .not-found h1 {
+    font-family: var(--font-display);
+    font-size: 6rem;
+    font-weight: 500;
+    margin-bottom: var(--space-3);
+  }
+
+  .not-found p {
+    font-family: var(--font-body);
+    margin-bottom: var(--space-4);
+  }
+
+  .not-found a {
+    font-family: var(--font-ui);
+    text-decoration: underline;
+  }
+</style>
