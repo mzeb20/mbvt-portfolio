@@ -3,6 +3,7 @@ title: "desde adentro"
 cover: "fotografias/desde-adentro/cover.jpg"
 order: 1
 statement: "desde adentro."
+layout: masonry
 images:
   - src: "fotografias/desde-adentro/01.jpg"
     alt: "Imagen"

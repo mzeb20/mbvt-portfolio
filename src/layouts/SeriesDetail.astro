@@ -1,15 +1,17 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import JustifiedGrid from '../components/JustifiedGrid.astro';
+import MasonryGallery from '../components/MasonryGallery.astro';
 import type { ImageMetadata } from 'astro';
 
 interface Props {
   title: string;
   statement?: string;
   images: { src: ImageMetadata; alt: string }[];
+  layout?: 'justified' | 'masonry';
 }
 
-const { title, statement, images } = Astro.props;
+const { title, statement, images, layout = 'justified' } = Astro.props;
 ---
 
 <BaseLayout title={`${title} — Mercedes Bonavita`}>
@@ -19,7 +21,11 @@ const { title, statement, images } = Astro.props;
       {statement && <p class="statement">{statement}</p>}
     </header>
 
-    <JustifiedGrid images={images} />
+    {layout === 'masonry' ? (
+      <MasonryGallery images={images} />
+    ) : (
+      <JustifiedGrid images={images} />
+    )}
   </main>
 </BaseLayout>
 

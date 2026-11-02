@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  images: { src: ImageMetadata; alt: string }[];
+  columns?: number;
+}
+
+const { images, columns = 3 } = Astro.props;
+
+const sizes = `(max-width: 768px) 100vw, ${100 / columns}vw`;
+---
+
+<div class="masonry-gallery" style={`--masonry-columns: ${columns};`}>
+  {images.map((img) => (
+    <figure>
+      <Image
+        src={img.src}
+        alt={img.alt}
+        widths={[600, 900, 1200, 1600]}
+        sizes={sizes}
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+  ))}
+</div>
+
+<style>
+  .masonry-gallery {
+    column-count: 1;
+    column-gap: 12px;
+  }
+
+  @media (min-width: 768px) {
+    .masonry-gallery {
+      column-count: var(--masonry-columns, 3);
+    }
+  }
+
+  .masonry-gallery figure {
+    break-inside: avoid;
+    margin: 0 0 12px;
+  }
+
+  .masonry-gallery :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

@@ -14,6 +14,7 @@ const fotografias = defineCollection({
     order: z.number(),
     statement: z.string().optional(),
     images: z.array(imageRef).min(1),
+    layout: z.enum(['justified', 'masonry']).default('justified'),
   }),
 });
 
@@ -35,6 +36,7 @@ const exploraciones = defineCollection({
     order: z.number(),
     statement: z.string().optional(),
     images: z.array(imageRef).min(1),
+    layout: z.enum(['justified', 'masonry']).default('justified'),
   }),
 });
 
